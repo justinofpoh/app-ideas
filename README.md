@@ -29,29 +29,32 @@ Google sign-in is already configured in the Google Cloud project **App Idea Stor
 - `https://appidea.store/api/auth/callback/google`
 - `http://localhost:5173/api/auth/callback/google`
 
-Then, from `worker/`:
+### Deploys
 
-```bash
-npm install                                   # at the repo root, installs both workspaces
-npx wrangler kv namespace create OAUTH_KV     # paste the id into wrangler.jsonc (replaces REPLACE_WITH_OAUTH_KV_ID)
-npx wrangler secret put GOOGLE_CLIENT_ID      # from Google Cloud > Google Auth Platform > Clients
-npx wrangler secret put GOOGLE_CLIENT_SECRET
-openssl rand -base64 32 | npx wrangler secret put BETTER_AUTH_SECRET
-npm run db:migrate                            # adds the account tables to the shared D1 database
-cd .. && npm run deploy                       # builds web/ and deploys the Worker
-```
+Cloudflare Workers Builds deploys `main` automatically (Worker `appidea-app`):
+
+- Root directory: `worker`
+- Build command: `npm ci --prefix ../web && npm run build --prefix ../web && npm ci`
+- Deploy command: `npx wrangler d1 migrations apply appidea-store --remote && npx wrangler deploy`
+
+Secrets live on the Worker (Settings > Variables and Secrets): `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `BETTER_AUTH_SECRET` (any long random string). MCP OAuth grants are stored in the KV namespace `appidea-app-oauth`.
+
+To deploy by hand instead: `npm run install:all && npm run deploy`.
 
 The Google consent screen starts in **Testing**: only test users you add under Google Auth Platform > Audience can sign in. Publish the app there when you're ready for everyone (basic profile and email scopes don't need Google verification).
 
+`/blog/*`, `/robots.txt` and `/sitemap.xml` are served from the catalog Worker (`CATALOG_ORIGIN`), which also keeps running the App Store and TestFlight crons that fill the shared KV.
+
 ### Moving appidea.store onto this app
 
-When you're happy with `appidea-app.justinpohtm.workers.dev`, set `BETTER_AUTH_URL` to `https://appidea.store` in `worker/wrangler.jsonc`, move the `routes` from the catalog Worker to this one (or merge the catalog's cron and `/api/*` routes into this Worker), and redeploy. The MCP server's URL becomes `https://appidea.store/mcp`.
+Set `BETTER_AUTH_URL` to `https://appidea.store` and add the `appidea.store/*` and `www.appidea.store/*` routes in `worker/wrangler.jsonc`, after removing those two routes from the catalog Worker (and from the catalog's own `wrangler.jsonc`, so a later catalog deploy doesn't take them back). The MCP server's URL becomes `https://appidea.store/mcp`.
 
 ## Local development
 
 ```bash
 cp worker/.dev.vars.example worker/.dev.vars   # fill in the Google client ID and secret
-npm --workspace worker run db:migrate:local
+npm run install:all
+npm run db:migrate:local --prefix worker
 npm run dev:worker                              # Worker on :8787
 npm run dev:web                                 # site on :5173, proxies /api, /mcp, /authorize, /connect
 ```

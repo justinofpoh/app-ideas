@@ -1,0 +1,5 @@
+# copy to .dev.vars for `wrangler dev` (never commit .dev.vars)
+BETTER_AUTH_URL=http://localhost:5173
+BETTER_AUTH_SECRET=generate-with-openssl-rand-base64-32
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=

@@ -1,0 +1,45 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // The new App Idea Store app: web UI + accounts + MCP server.
+  // Deploys alongside the live catalog Worker ("appidea-store") and shares its D1 + KV,
+  // so you can try it on workers.dev before pointing appidea.store at it.
+  "name": "appidea-app",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-11-07",
+  "compatibility_flags": ["nodejs_compat"],
+  "upload_source_maps": true,
+
+  "assets": {
+    "directory": "../web/dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    // the Worker answers these first; everything else is a static file
+    "run_worker_first": ["/api/*", "/mcp", "/mcp/*", "/authorize", "/token", "/register", "/connect", "/.well-known/*", "/blog", "/blog/*", "/robots.txt", "/sitemap.xml"]
+  },
+
+  "vars": {
+    "BETTER_AUTH_URL": "https://appidea-app.justinpohtm.workers.dev",
+    // the catalog Worker keeps the blog, crons and App Store data
+    "CATALOG_ORIGIN": "https://appidea-store.justinpohtm.workers.dev"
+  },
+  // secrets (dashboard, or npx wrangler secret put …): BETTER_AUTH_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
+
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "appidea-store",
+      "database_id": "3fa7b3f4-cfc8-4d67-8bff-f4e780d185a8",
+      "migrations_dir": "./migrations"
+    }
+  ],
+
+  "kv_namespaces": [
+    // App Store + TestFlight snapshots written by the catalog Worker's cron
+    { "binding": "DATA", "id": "7e408fd2205d43fb8b17f15453867a1b", "preview_id": "81080f1caf2f4e16822ca252769fb31b" },
+    // MCP OAuth grants and tokens (namespace "appidea-app-oauth")
+    { "binding": "OAUTH_KV", "id": "28d847ad40fb4f4fb8615ff49cbc299f" }
+  ],
+
+  "workers_dev": true,
+  "observability": { "enabled": true }
+}

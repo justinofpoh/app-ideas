@@ -6,6 +6,7 @@ export interface Env {
   OAUTH_KV: KVNamespace // MCP OAuth grants and tokens
   ASSETS: Fetcher
   BETTER_AUTH_URL: string
+  CATALOG_ORIGIN: string
   BETTER_AUTH_SECRET: string
   GOOGLE_CLIENT_ID: string
   GOOGLE_CLIENT_SECRET: string

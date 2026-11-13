@@ -14,13 +14,15 @@
     "binding": "ASSETS",
     "not_found_handling": "single-page-application",
     // the Worker answers these first; everything else is a static file
-    "run_worker_first": ["/api/*", "/mcp", "/mcp/*", "/authorize", "/token", "/register", "/connect", "/.well-known/*"]
+    "run_worker_first": ["/api/*", "/mcp", "/mcp/*", "/authorize", "/token", "/register", "/connect", "/.well-known/*", "/blog", "/blog/*", "/robots.txt", "/sitemap.xml"]
   },
 
   "vars": {
-    "BETTER_AUTH_URL": "https://appidea-app.justinpohtm.workers.dev"
+    "BETTER_AUTH_URL": "https://appidea-app.justinpohtm.workers.dev",
+    // the catalog Worker keeps the blog, crons and App Store data
+    "CATALOG_ORIGIN": "https://appidea-store.justinpohtm.workers.dev"
   },
-  // secrets (npx wrangler secret put …): BETTER_AUTH_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
+  // secrets (dashboard, or npx wrangler secret put …): BETTER_AUTH_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
 
   "d1_databases": [
     {
@@ -34,8 +36,8 @@
   "kv_namespaces": [
     // App Store + TestFlight snapshots written by the catalog Worker's cron
     { "binding": "DATA", "id": "7e408fd2205d43fb8b17f15453867a1b", "preview_id": "81080f1caf2f4e16822ca252769fb31b" },
-    // MCP OAuth grants and tokens. Create it with: npx wrangler kv namespace create OAUTH_KV
-    { "binding": "OAUTH_KV", "id": "REPLACE_WITH_OAUTH_KV_ID" }
+    // MCP OAuth grants and tokens (namespace "appidea-app-oauth")
+    { "binding": "OAUTH_KV", "id": "28d847ad40fb4f4fb8615ff49cbc299f" }
   ],
 
   "workers_dev": true,

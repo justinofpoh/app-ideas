@@ -2,12 +2,12 @@
   "name": "app-idea-store",
   "private": true,
   "type": "module",
-  "workspaces": ["web", "worker"],
   "scripts": {
-    "dev:web": "npm --workspace web run dev",
-    "dev:worker": "npm --workspace worker run dev",
-    "build": "npm --workspace web run build",
-    "deploy": "npm run build && npm --workspace worker run deploy",
-    "check": "npm --workspace web exec tsc -b && npm --workspace worker run check"
+    "install:all": "npm ci --prefix web && npm ci --prefix worker",
+    "dev:web": "npm run dev --prefix web",
+    "dev:worker": "npm run dev --prefix worker",
+    "build": "npm run build --prefix web",
+    "deploy": "npm run build && npm run deploy --prefix worker",
+    "check": "cd web && npx tsc -b && cd ../worker && npx tsc --noEmit"
   }
 }

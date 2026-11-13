@@ -104,6 +104,16 @@ app.get('/connect', (c) => {
   return c.html(connectPage(safe))
 })
 
+/* ---------- blog and SEO files still live on the catalog Worker ---------- */
+const fromCatalog = (c: { req: { url: string; raw: Request }; env: Env }) => {
+  const url = new URL(c.req.url)
+  return fetch(new Request(`${c.env.CATALOG_ORIGIN}${url.pathname}${url.search}`, { headers: c.req.raw.headers }))
+}
+app.get('/blog', (c) => c.redirect('/blog/', 301))
+app.get('/blog/*', (c) => fromCatalog(c))
+app.get('/robots.txt', (c) => fromCatalog(c))
+app.get('/sitemap.xml', (c) => fromCatalog(c))
+
 /* ---------- everything else is the web app ---------- */
 app.notFound((c) => (c.req.path.startsWith('/api/') ? c.json({ error: 'Not found' }, 404) : c.env.ASSETS.fetch(c.req.raw)))
 app.onError((err, c) => {

@@ -1,0 +1,13 @@
+{
+  "name": "app-idea-store",
+  "private": true,
+  "type": "module",
+  "workspaces": ["web", "worker"],
+  "scripts": {
+    "dev:web": "npm --workspace web run dev",
+    "dev:worker": "npm --workspace worker run dev",
+    "build": "npm --workspace web run build",
+    "deploy": "npm run build && npm --workspace worker run deploy",
+    "check": "npm --workspace web exec tsc -b && npm --workspace worker run check"
+  }
+}

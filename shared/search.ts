@@ -48,3 +48,14 @@ export function query(q: string, filter: Filter, sort: Sort, saved: string[]): I
   }
   return terms.length ? [...list].sort((a, b) => score(b) - score(a)) : list
 }
+
+// When nothing matches every word, the ideas that match the most words.
+export function nearest(q: string, n: number): Idea[] {
+  const terms = q.toLowerCase().split(/\s+/).filter((t) => t.length > 2)
+  if (!terms.length) return []
+  return IDEAS.map((i) => ({ i, hits: terms.filter((t) => haystack.get(i.id)!.includes(t)).length }))
+    .filter((x) => x.hits > 0)
+    .sort((a, b) => b.hits - a.hits)
+    .slice(0, n)
+    .map((x) => x.i)
+}

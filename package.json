@@ -5,9 +5,10 @@
   "scripts": {
     "install:all": "npm ci --prefix web && npm ci --prefix worker",
     "dev:web": "npm run dev --prefix web",
-    "dev:worker": "npm run dev --prefix worker",
+    "dev:worker": "mkdir -p web/dist && npm run dev --prefix worker",
     "build": "npm run build --prefix web",
     "deploy": "npm run build && npm run deploy --prefix worker",
+    "receipts": "node scripts/receipts.mjs",
     "check": "cd web && npx tsc -b && cd ../worker && npx tsc --noEmit"
   }
 }

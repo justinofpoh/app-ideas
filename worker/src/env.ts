@@ -7,6 +7,9 @@ export interface Env {
   ASSETS: Fetcher
   BETTER_AUTH_URL: string
   CATALOG_ORIGIN: string
+  // Stripe payment links; empty until they exist, and the site collects emails instead
+  PAYMENT_LINK_BRIEF?: string
+  PAYMENT_LINK_PASS?: string
   BETTER_AUTH_SECRET: string
   GOOGLE_CLIENT_ID: string
   GOOGLE_CLIENT_SECRET: string

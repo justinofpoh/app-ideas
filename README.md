@@ -61,6 +61,27 @@ npm run dev:web                                 # site on :5173, proxies /api, /
 
 Test the MCP server with `npx @modelcontextprotocol/inspector` pointed at `http://localhost:5173/mcp`.
 
+## Openings and receipts
+
+An opening is a niche defined in `shared/niches.json`. Its receipts (top apps, ratings, and counts of what recent 1–2 star reviews mention) come from Apple's public search and review feeds:
+
+```bash
+npm run receipts                 # all niches; writes shared/openings.data.json
+npm run receipts focus-timers    # one niche
+```
+
+Run it from a machine that can reach `itunes.apple.com`, then commit the JSON. Review text is read for counting and never stored. An opening with no receipts says so on its page.
+
+## Email list and pre-orders
+
+`POST /api/subscribe` stores emails in the `subscriber` table (migration `0004`) with what they asked for: `radar`, `brief`, `pass` or `niche`. Read them with:
+
+```bash
+npx wrangler d1 execute appidea-store --remote --command "select * from subscriber order by created_at desc"
+```
+
+The Build Brief and Builder Pass buttons collect emails until `PAYMENT_LINK_BRIEF` and `PAYMENT_LINK_PASS` (Stripe payment links) are set in `worker/wrangler.jsonc`; then they go to checkout.
+
 ## Payments (not wired yet)
 
 `entitlement` holds each user's plan. The plan is to sell Pro and Idea Kits through a merchant of record (Lemon Squeezy, Paddle or Polar), whose webhook writes to this table. `/api/me` already returns `plan`.

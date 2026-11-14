@@ -7,6 +7,8 @@ import { go, href } from '../lib/router'
 import { hasWebGL, prefersReducedMotion } from '../lib/motion'
 import { account, useAccount } from '../lib/store'
 import { BrushTally } from '../components/BrushTally'
+import { EmailCapture, PlanButton } from '../components/EmailCapture'
+import { OPENINGS } from '@shared/openings'
 import seedBetas from '../data/betas.json'
 import './universe.css'
 
@@ -28,6 +30,7 @@ export function Universe() {
   const [live, setLive] = useState(true)
   const [q, setQ] = useState('')
   const [signals, setSignals] = useState(seed)
+  const [painted, setPainted] = useState(false)
   const { backend, user } = useAccount()
   const root = useRef<HTMLDivElement>(null)
   const hero = useRef<HTMLElement>(null)
@@ -65,7 +68,7 @@ export function Universe() {
     gsap.ticker.add(tick)
     gsap.ticker.lagSmoothing(0)
     const ctx = gsap.context(() => {
-      gsap.from('.l-hero-foot > *', { y: 28, opacity: 0, duration: 1, ease: 'expo.out', stagger: 0.08, delay: 1.1 })
+      gsap.from('.l-hero-foot > *', { y: 28, opacity: 0, duration: 1, ease: 'expo.out', stagger: 0.08, delay: 0.15 })
       gsap.utils.toArray<HTMLElement>('[data-reveal]').forEach((el) => {
         gsap.from(el.children, {
           y: 48, opacity: 0, duration: 1, ease: 'expo.out', stagger: 0.08,
@@ -91,8 +94,10 @@ export function Universe() {
       <section className="l-hero" ref={hero} aria-labelledby="l-title">
         <h1 id="l-title" className="sr-only">Find the app worth building.</h1>
         {webgl ? (
+          <>
+          {!painted && <p className="l-flat-title l-flat-wait" aria-hidden="true">Find the app<br />worth building.</p>}
           <Suspense fallback={<div className="l-canvas" />}>
-            <div className="l-canvas">
+            <div className="l-canvas" data-painted={painted || undefined}>
               <UniverseScene
                 live={live}
                 headline={['Find the app', 'worth building.']}
@@ -101,9 +106,11 @@ export function Universe() {
                 onFocus={setFocused}
                 onOpen={(id) => go(href.idea(id))}
                 onLeaving={leaving}
+                onReady={() => setPainted(true)}
               />
             </div>
           </Suspense>
+          </>
         ) : (
           <p className="l-flat-title" aria-hidden="true">Find the app<br />worth building.</p>
         )}
@@ -116,9 +123,9 @@ export function Universe() {
             </div>
           ) : (
             <>
-              <p className="l-lede">{IDEAS.length} app ideas, each with the evidence behind it.</p>
+              <p className="l-lede">{OPENINGS.length} App Store openings with the receipts, and {IDEAS.length} app concepts to start from.</p>
               <form className="l-actions" role="search" onSubmit={(e) => { e.preventDefault(); go(href.library, q) }}>
-                <a className="btn btn-red l-cta" href={href.library}>Explore ideas</a>
+                <a className="btn btn-red l-cta" href={href.openings}>See the openings</a>
                 <div className="search">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
                   <label className="sr-only" htmlFor="l-search">Search ideas</label>
@@ -138,7 +145,11 @@ export function Universe() {
             <span className="l-count">{signals.open}</span>
             <span>TestFlight betas are open right now.</span>
           </h2>
-          <p>See what people are building before it reaches the App Store. Checked hourly from public TestFlight links{updated && `, last on ${updated}`}.</p>
+          <p>See what people are building before it reaches the App Store. Read from public TestFlight links{updated && `, last checked ${updated}`}.</p>
+          <div className="l-radar">
+            <p>Get new openings and what moved, by email. No more than weekly.</p>
+            <EmailCapture interest="radar" source="landing" cta="Send me the radar" done="You are on the list. The next radar will land in your inbox." tone="ink" />
+          </div>
         </div>
         <div className="l-marquee" aria-hidden="true">
           {[rowA, rowB].map((row, k) => (
@@ -154,10 +165,10 @@ export function Universe() {
         <div className="l-wrap">
           <h2 id="l-steps-title" className="l-h2" data-reveal><span>From scroll to shipped.</span></h2>
           <ol className="l-step-list" data-reveal>
-            <li><span className="l-step-n">1</span><h3>Explore</h3><p>Browse piles of ideas by problem, audience and tech.</p></li>
+            <li><span className="l-step-n">1</span><h3>Explore</h3><p>Read the openings and browse concepts by problem, audience and tech.</p></li>
             <li><span className="l-step-n">2</span><h3>Collect</h3><p>Save the ones that pull at you. They follow your account.</p></li>
             <li><span className="l-step-n">3</span><h3>Connect</h3><p>See what your saves have in common and where two meet.</p></li>
-            <li><span className="l-step-n">4</span><h3>Build</h3><p>Take the brief into Claude or Cursor and start.</p></li>
+            <li><span className="l-step-n">4</span><h3>Build</h3><p>Check the receipts, then take the idea into Claude or Cursor.</p></li>
           </ol>
         </div>
       </section>
@@ -167,7 +178,7 @@ export function Universe() {
         <div className="l-wrap l-mcp-grid">
           <div data-reveal>
             <h2 id="l-mcp-title" className="l-h2"><span>Your ideas, inside Claude.</span></h2>
-            <p className="l-body">Connect App Idea Store to Claude, Cursor or any MCP client. Search ideas, pull full briefs and synthesize your saves without leaving the chat.</p>
+            <p className="l-body">Connect App Idea Store to Claude, Cursor or any MCP client. Search ideas, pull the full write-up and compare your saves without leaving the chat.</p>
             {user ? (
               <a className="btn" href={href.library}>Copy your connector link from the account menu</a>
             ) : (
@@ -193,20 +204,20 @@ export function Universe() {
             <article className="l-plan">
               <h3>Free</h3>
               <p className="l-price">$0</p>
-              <ul><li>The whole idea library</li><li>Save and sync ideas</li><li>Constellation and synthesis</li></ul>
-              <a className="btn" href={href.library}>Start exploring</a>
+              <ul><li>Every opening and its receipts</li><li>The whole concept library</li><li>Save, sync and compare ideas</li></ul>
+              <a className="btn" href={href.openings}>See the openings</a>
             </article>
             <article className="l-plan l-plan-pro">
-              <h3>Pro</h3>
-              <p className="l-price">$12<small>/month</small></p>
-              <ul><li>Signal alerts in your niches</li><li>Full evidence on every idea</li><li>MCP access for Claude and Cursor</li></ul>
-              <button className="btn" disabled>Coming soon</button>
+              <h3>Build Brief</h3>
+              <p className="l-price">$29<small> once</small></p>
+              <ul><li>One opening as a build-ready spec</li><li>Screens, data model and paywall plan</li><li>A file your coding agent starts from</li></ul>
+              <PlanButton plan="brief" label="Pre-order a brief" source="pricing" tone="red" />
             </article>
             <article className="l-plan">
-              <h3>Idea Kit</h3>
-              <p className="l-price">$19<small>/kit</small></p>
-              <ul><li>One idea, fully researched</li><li>SwiftUI starter project</li><li>App Store listing draft</li></ul>
-              <button className="btn" disabled>Coming soon</button>
+              <h3>Builder Pass</h3>
+              <p className="l-price">$79<small> a year</small></p>
+              <ul><li>Three briefs a year</li><li>Alerts on the niches you follow</li><li>Everything inside Claude and Cursor</li></ul>
+              <PlanButton plan="pass" label="Pre-order the pass" source="pricing" />
             </article>
           </div>
         </div>
@@ -216,7 +227,7 @@ export function Universe() {
       <section className="l-end">
         <div className="l-wrap" data-reveal>
           <p className="l-end-title">Find yours.</p>
-          <a className="btn btn-red l-cta" href={href.library}>Explore {IDEAS.length} ideas</a>
+          <a className="btn btn-red l-cta" href={href.openings}>See {OPENINGS.length} openings</a>
           <ul className="l-cats">
             {CATEGORIES.map((c) => (
               <li key={c}><BrushTally count={1} color={CATEGORY_INK[c]} size={22} />{c}</li>

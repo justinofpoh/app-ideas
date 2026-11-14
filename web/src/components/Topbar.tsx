@@ -6,6 +6,7 @@ import { AccountButton } from './AccountButton'
 
 const LINKS = [
   { href: href.universe, label: 'Universe', match: ['universe'] },
+  { href: href.openings, label: 'Openings', match: ['openings', 'opening'] },
   { href: href.library, label: 'Library', match: ['library', 'idea'] },
   { href: href.constellation, label: 'Constellation', match: ['constellation'] },
 ]

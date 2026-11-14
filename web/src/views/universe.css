@@ -145,3 +145,12 @@
   .l-step-list { grid-template-columns: 1fr; }
   .l-step-list li:nth-child(even) { transform: rotate(0.5deg); }
 }
+
+/* the flat headline holds the hero until the 3D one has drawn */
+.l-flat-wait { z-index: 1; pointer-events: none; font-size: clamp(2.6rem, 8.6vw, 8.2rem); padding-bottom: 6vh; }
+.l-canvas { opacity: 0; transition: opacity 0.5s ease; }
+.l-canvas[data-painted] { opacity: 1; }
+.l-radar { margin-top: 34px; display: grid; gap: 12px; }
+.l-signals .l-radar p { margin: 0; color: var(--card); font-weight: 600; }
+.l-plan .btn-plan { align-self: start; }
+.l-plan-pro .plan-wait p { color: var(--card); }

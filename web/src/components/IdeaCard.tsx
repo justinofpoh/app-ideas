@@ -26,8 +26,9 @@ export function IdeaCard({ idea, variant, saved, hidden, onOpen }: Props) {
   const tilt = ((idea.id.charCodeAt(0) * 7 + idea.id.length * 13) % 9) / 10 - 0.4
   const save = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
-    if (!saved) flyToCollection(e.currentTarget, ink)
+    const from = e.currentTarget
     savedStore.toggle(idea.id)
+    if (!saved) try { flyToCollection(from, ink) } catch { /* the save already happened */ }
   }
   return (
     <motion.article
@@ -53,6 +54,7 @@ export function IdeaCard({ idea, variant, saved, hidden, onOpen }: Props) {
           </button>
         </div>
         <div className="card-body">
+          {variant === 'tall' && <p className="card-problem">{idea.problem}</p>}
           <p className="card-cat"><span className="dot" />{idea.category}</p>
           <h3>{idea.title}</h3>
           <p className="card-pitch">{idea.pitch}</p>

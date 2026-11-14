@@ -24,7 +24,7 @@
 .node-slip { fill: var(--card); stroke: var(--line-strong); stroke-width: 1; filter: drop-shadow(0 3px 4px rgba(60, 35, 15, 0.18)); }
 .node[data-sel] .node-slip { stroke: var(--vermilion); stroke-width: 2; }
 .node-ring { fill: none; stroke: var(--vermilion); stroke-width: 2.5; }
-.node text { font-size: 12.5px; font-weight: 600; fill: var(--ink); paint-order: stroke; stroke: var(--paper); stroke-width: 4px; stroke-linejoin: round; pointer-events: none; }
+.node text { font-size: 14px; font-weight: 600; fill: var(--ink); paint-order: stroke; stroke: var(--paper); stroke-width: 4px; stroke-linejoin: round; pointer-events: none; }
 .node:focus-visible .node-slip { stroke: var(--vermilion); stroke-width: 2.5; }
 
 .inspector {

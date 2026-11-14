@@ -8,8 +8,9 @@ import { LivingField } from './components/LivingField'
 import { Universe } from './views/Universe'
 import { Library } from './views/Library'
 import { Constellation } from './views/Constellation'
+import { Openings } from './views/Openings'
 
-const view = (r: Route) => (r.name === 'idea' ? 'library' : r.name)
+const view = (r: Route) => (r.name === 'idea' ? 'library' : r.name === 'opening' ? 'openings' : r.name)
 
 export function App() {
   const route = useRoute()
@@ -42,6 +43,7 @@ export function App() {
         {shown === 'universe' && <Universe />}
         {shown === 'library' && <Library onInk={onInk} />}
         {shown === 'constellation' && <Constellation onInk={onInk} />}
+        {shown === 'openings' && <Openings onInk={onInk} />}
       </div>
       <div className="wipe" ref={wipe} aria-hidden="true"><img src="./icon-192.png" alt="" /></div>
     </MotionConfig>

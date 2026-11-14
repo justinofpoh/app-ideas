@@ -2,6 +2,7 @@ import { useEffect, useRef, type MouseEvent } from 'react'
 import { motion } from 'motion/react'
 import { BY_ID, CATEGORY_INK } from '@shared/ideas'
 import { related, sharedTraits } from '@shared/similarity'
+import { openingsForIdea } from '@shared/openings'
 import { savedStore, useSaved } from '../lib/store'
 import { go, href } from '../lib/router'
 import { ease, spring, stagger } from '../lib/motion'
@@ -35,9 +36,11 @@ export function IdeaDetail({ id }: { id: string }) {
   const ink = CATEGORY_INK[idea.category]
   const isSaved = saved.includes(idea.id)
   const rel = related(idea, 4)
+  const openings = openingsForIdea(idea.id)
   const toggle = (e: MouseEvent<HTMLButtonElement>) => {
-    if (!isSaved) flyToCollection(e.currentTarget, ink)
+    const from = e.currentTarget
     savedStore.toggle(idea.id)
+    if (!isSaved) try { flyToCollection(from, ink) } catch { /* the save already happened */ }
   }
   const item = {
     hidden: { opacity: 0, y: 18 },
@@ -98,6 +101,12 @@ export function IdeaDetail({ id }: { id: string }) {
             <div><dt>Build size</dt><dd>{EFFORT_TEXT[idea.effort]}</dd></div>
             <div><dt>Business model</dt><dd>{idea.model}</dd></div>
           </motion.dl>
+          {openings.length > 0 && (
+            <motion.div variants={item} className="d-block d-opening">
+              <h3>App Store receipts</h3>
+              {openings.map((o) => <p key={o.slug}><a href={href.opening(o.slug)}>{o.title}</a>: who is already there and what their users complain about.</p>)}
+            </motion.div>
+          )}
           <motion.div variants={item} className="d-block d-related">
             <h3>Related ideas</h3>
             <ul>

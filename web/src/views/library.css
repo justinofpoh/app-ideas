@@ -223,3 +223,15 @@
   .detail-scrim { padding-top: 72px; }
   .d-facts { grid-template-columns: 1fr; }
 }
+
+.empty-near, .empty-ask { display: grid; gap: 10px; }
+.empty .empty-near p, .empty .empty-ask p { font-size: var(--t-m); }
+.empty-near ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.empty-near li { display: grid; }
+.empty-near a { font-weight: 660; color: var(--ink); }
+.empty-near span { font-size: var(--t-s); }
+/* tall and wide slips: use the room instead of leaving it blank or clipping */
+.card-tall .card-body { margin-top: 18px; flex: 1; display: flex; flex-direction: column; gap: 6px; }
+.card-tall .card-problem { margin: 0 0 auto; font-family: var(--hand); font-weight: 700; font-size: 1.45rem; line-height: 1.08; color: var(--ink); transform: rotate(-1deg); max-width: 22ch; }
+.card-wide .card-pitch { -webkit-line-clamp: 1; }
+.d-opening a { color: var(--ink); font-weight: 640; }

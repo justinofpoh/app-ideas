@@ -7,11 +7,15 @@ export type Route =
   | { name: 'library' }
   | { name: 'idea'; id: string }
   | { name: 'constellation' }
+  | { name: 'openings' }
+  | { name: 'opening'; slug: string }
 
 function parse(): Route {
   const h = location.hash.replace(/^#\/?/, '')
   if (h === 'library') return { name: 'library' }
   if (h === 'constellation') return { name: 'constellation' }
+  if (h === 'openings') return { name: 'openings' }
+  if (h.startsWith('opening-')) return { name: 'opening', slug: h.slice(8) }
   if (h.startsWith('idea-')) return { name: 'idea', id: h.slice(5) }
   return { name: 'universe' }
 }
@@ -31,6 +35,8 @@ export const href = {
   library: '#library',
   constellation: '#constellation',
   idea: (id: string) => `#idea-${id}`,
+  openings: '#openings',
+  opening: (slug: string) => `#opening-${slug}`,
 }
 export function go(to: string, query = '') {
   pendingQuery = query

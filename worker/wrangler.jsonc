@@ -20,7 +20,10 @@
   "vars": {
     "BETTER_AUTH_URL": "https://appidea-app.justinpohtm.workers.dev",
     // the catalog Worker keeps the blog, crons and App Store data
-    "CATALOG_ORIGIN": "https://appidea-store.justinpohtm.workers.dev"
+    "CATALOG_ORIGIN": "https://appidea-store.justinpohtm.workers.dev",
+    // Stripe payment links (https://buy.stripe.com/...). While empty, the paid buttons collect emails instead.
+    "PAYMENT_LINK_BRIEF": "",
+    "PAYMENT_LINK_PASS": ""
   },
   // secrets (dashboard, or npx wrangler secret put …): BETTER_AUTH_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
 

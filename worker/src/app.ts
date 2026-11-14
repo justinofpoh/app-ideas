@@ -57,6 +57,30 @@ app.get('/api/signals/testflight', async (c) => {
   )
 })
 
+/* ---------- email list and pre-orders ---------- */
+const INTERESTS = new Set(['radar', 'brief', 'pass', 'niche'])
+const payLink = (v?: string) => (v && /^https:\/\/(buy|book)\.stripe\.com\//.test(v) ? v : null)
+
+// Public settings the page needs: where the paid buttons go, if anywhere yet.
+app.get('/api/config', (c) => c.json({ briefLink: payLink(c.env.PAYMENT_LINK_BRIEF), passLink: payLink(c.env.PAYMENT_LINK_PASS) }))
+
+app.post('/api/subscribe', async (c) => {
+  const body = await c.req.json<Record<string, unknown>>().catch(() => ({}) as Record<string, unknown>)
+  // bots fill every field; people never see this one
+  if (typeof body.website === 'string' && body.website) return c.json({ ok: true })
+  const email = String(body.email || '').trim().toLowerCase()
+  if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return c.json({ error: 'Enter a valid email address' }, 400)
+  const interest = INTERESTS.has(String(body.interest)) ? String(body.interest) : 'radar'
+  const source = String(body.source || 'site').slice(0, 40)
+  const note = body.note ? String(body.note).slice(0, 200) : null
+  const now = Date.now()
+  await c.env.DB.prepare(
+    `INSERT INTO subscriber (email, source, interest, note, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)
+     ON CONFLICT(email) DO UPDATE SET interest = excluded.interest, source = excluded.source, note = COALESCE(excluded.note, subscriber.note), updated_at = excluded.updated_at`,
+  ).bind(email, source, interest, note, now, now).run()
+  return c.json({ ok: true })
+})
+
 /* ---------- MCP authorization (OAuth 2.1 for Claude, Cursor and other MCP clients) ---------- */
 // 1. Not signed in: send the person to sign in with Google, then back here.
 // 2. Signed in: show a consent page bound to this browser.

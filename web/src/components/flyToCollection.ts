@@ -1,10 +1,11 @@
 import gsap from 'gsap'
 import { prefersReducedMotion } from '../lib/motion'
+import { href } from '../lib/router'
 
 // Saving an idea sends a small paper slip from the button into the collection count.
 export function flyToCollection(from: HTMLElement, ink: string) {
   if (prefersReducedMotion()) return
-  const target = document.querySelector('a[href={href.constellation}]')
+  const target = document.querySelector(`a[href="${href.constellation}"]`)
   if (!target) return
   const a = from.getBoundingClientRect()
   const b = target.getBoundingClientRect()

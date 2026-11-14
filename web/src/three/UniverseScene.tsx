@@ -73,6 +73,7 @@ interface SceneProps {
   onFocus: (c: Category | null) => void
   onOpen: (id: string) => void
   onLeaving: () => void
+  onReady?: () => void
 }
 
 export default function UniverseScene(props: SceneProps) {
@@ -91,7 +92,7 @@ export default function UniverseScene(props: SceneProps) {
       <directionalLight position={[-10, 4, -6]} intensity={0.5} color="#c9d2ff" />
       <LiftView />
       <Dust />
-      <Headline lines={props.headline} />
+      <Headline lines={props.headline} onReady={props.onReady} />
       <World {...props} />
     </Canvas>
   )
@@ -110,11 +111,11 @@ function LiftView() {
 }
 
 // The headline lives in the scene so piles pass in front of and behind it.
-function Headline({ lines }: { lines: [string, string] }) {
+function Headline({ lines, onReady }: { lines: [string, string]; onReady?: () => void }) {
   const size = NARROW ? 1.18 : 2.15
   return (
     <Billboard position={[0, 0.9, 0]}>
-      <Text font="./fonts/bricolage-800.woff" fontSize={size} lineHeight={0.92} letterSpacing={-0.045} anchorX="center" anchorY="middle" textAlign="center">
+      <Text font="./fonts/bricolage-800.woff" fontSize={size} lineHeight={0.92} letterSpacing={-0.045} anchorX="center" anchorY="middle" textAlign="center" onSync={onReady}>
         {`${lines[0]}\n${lines[1]}`}
         {/* full ink, unaffected by fog or tone mapping */}
         <meshBasicMaterial color="#241c17" fog={false} toneMapped={false} />

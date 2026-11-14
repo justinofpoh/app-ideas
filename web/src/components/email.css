@@ -1,0 +1,20 @@
+.ec { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; max-width: 480px; }
+.ec input[type='email'] {
+  flex: 1 1 200px; min-width: 0; height: 48px; padding: 0 18px;
+  border-radius: var(--r-pill); border: 1px solid var(--line-strong);
+  background: var(--card); color: var(--ink); outline: none; font-size: var(--t-m);
+}
+.ec input[type='email']:focus-visible { border-color: var(--ink); box-shadow: 0 0 0 4px color-mix(in oklab, var(--vermilion) 22%, transparent); }
+.ec input[type='email']::placeholder { color: var(--ink-3); }
+.ec .btn { background: var(--ink); color: var(--card); border-color: transparent; }
+.ec .btn:disabled { opacity: 0.6; cursor: default; }
+.ec-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.ec-err { flex-basis: 100%; margin: 0; font-size: var(--t-s); color: var(--vermilion-deep); }
+.ec-done { margin: 0; font-weight: 600; }
+.ec-ink input[type='email'] { border-color: transparent; }
+.ec-ink .btn { background: var(--vermilion); }
+.ec-ink .ec-err { color: #ffb39e; }
+.ec-red .ec-err, .ec-red.ec-done { color: var(--card); }
+.plan-wait { display: grid; gap: 10px; }
+.plan-wait p { margin: 0; font-size: var(--t-s); }
+.l-plan-pro .ec .btn, .op-brief .ec .btn { background: var(--ink); color: var(--card); border-color: transparent; }

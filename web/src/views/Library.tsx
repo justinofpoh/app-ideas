@@ -2,13 +2,14 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, LayoutGroup, motion } from 'motion/react'
 import Lenis from 'lenis'
 import { CATEGORY_INK, IDEAS, type Category } from '@shared/ideas'
-import { FILTERS, query, type Filter, type Sort } from '@shared/search'
+import { FILTERS, nearest, query, type Filter, type Sort } from '@shared/search'
 import { useSaved } from '../lib/store'
 import { go, href, takePendingQuery, useRoute } from '../lib/router'
 import { prefersReducedMotion, spring } from '../lib/motion'
 import { IdeaCard, variantAt } from '../components/IdeaCard'
 import { IdeaDetail } from './IdeaDetail'
 import { BrushTally } from '../components/BrushTally'
+import { EmailCapture } from '../components/EmailCapture'
 import './library.css'
 
 export function Library({ onInk }: { onInk: (c: string) => void }) {
@@ -79,7 +80,8 @@ export function Library({ onInk }: { onInk: (c: string) => void }) {
     return () => { removeEventListener('pointermove', onMove); el.removeEventListener('pointerleave', onLeave); removeEventListener('scroll', onLeave) }
   }, [])
 
-  const label = filter === 'For You' ? (saved.length ? 'ranked by what you saved' : 'in the whole library') : `in ${filter}`
+  const close = useMemo(() => (results.length ? [] : nearest(q, 4)), [results.length, q])
+  const label = q.trim() ? `match “${q.trim()}”` : filter === 'For You' ? (saved.length ? 'ranked by what you saved' : 'in the whole library') : `in ${filter}`
 
   return (
     <LayoutGroup>
@@ -135,6 +137,18 @@ export function Library({ onInk }: { onInk: (c: string) => void }) {
           {results.length === 0 && (
             <div className="empty">
               <p>No ideas match “{q}” {filter !== 'For You' && <>in {filter}</>}.</p>
+              {close.length > 0 && (
+                <div className="empty-near">
+                  <p>Closest in the library:</p>
+                  <ul>{close.map((i) => <li key={i.id}><a href={href.idea(i.id)}>{i.title}</a><span>{i.pitch}</span></li>)}</ul>
+                </div>
+              )}
+              {q.trim() && (
+                <div className="empty-ask">
+                  <p>Want this niche researched? Leave your email and we will tell you when it is.</p>
+                  <EmailCapture interest="niche" source="search" note={q.trim()} cta="Request it" done="Noted. We will email you if we cover it." />
+                </div>
+              )}
               <button className="btn" onClick={() => { setQ(''); setFilter('For You') }}>Clear search and filters</button>
             </div>
           )}
